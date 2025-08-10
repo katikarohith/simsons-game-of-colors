@@ -1,104 +1,74 @@
-let gameseq=[];
-let userseq=[];
+let gameseq = [];
+let userseq = [];
+let started = false;
+let level = 0;
+let btns = ["one", "two", "three", "four"];
+let h2 = document.querySelector("h2");
 
-let started=false;
-let level=0;
-let btns=["one","two","three","four"];//classes
-
-let h2=document.querySelector("h2");
-
-document.addEventListener("keypress",function(){
-    if (started==false){
-        console.log("game is started");
-        started=true;
-        levelup();
-    }
-
+document.querySelector(".start").addEventListener("click", function () {
+  if (!started) {
+    started = true;
+    levelup();
+  }
 });
-function gameflash(btn){
-    btn.classList.add("gameflash");
-setTimeout(function(){
-    btn.classList.remove("gameflash");
-},300);
 
-}
-function userflash(btn){
-    btn.classList.add("userflash");
-setTimeout(function(){
-    btn.classList.remove("userflash");
-},300);
-
+function gameflash(btn) {
+  btn.classList.add("gameflash");
+  setTimeout(() => btn.classList.remove("gameflash"), 300);
 }
 
-
-function levelup(){
-    level++;
-    h2.innerText=`level ${level}`;
-    userseq=[];
-
-let randidx=Math.floor(Math.random()*4);
-let randnum=btns[randidx];
-let randbtn=document.querySelector(`.${randnum}`); 
-console.log(randidx);
-console.log(randnum);
-console.log(randbtn);
-gameseq.push(randnum);
-console.log(gameseq);
-gameflash(randbtn);
-
-
+function userflash(btn) {
+  btn.classList.add("userflash");
+  setTimeout(() => btn.classList.remove("userflash"), 300);
 }
 
-function checkans(idx){
-    // this not wroks realiased let idx=level-1;
-    if(userseq[idx]===gameseq[idx]){
-        if(userseq.length==gameseq.length){
-            setTimeout(levelup,1000);          //here in this we used settime out bcz in some cases if not used and if next generated num/color is same as previous btn we clicked when it becomes coreect answer  than it will work at a same  time and looks like over lapping so we use set timeout ,
-        }
-    }else
-    {
-        h2.innerHTML=`game over !! your score was <b>${level}<b> <br> press any key to start again .`;
-        document.querySelector("body").style.backgroundColor="red";
-        setTimeout(function(){
-              document.querySelector("body").style. backgroundColor="white";
-        },150);
-        reset();
+function levelup() {
+  level++;
+  h2.innerText = `Level ${level}`;
+  userseq = [];
+  let randidx = Math.floor(Math.random() * 4);
+  let randnum = btns[randidx];
+  let randbtn = document.querySelector(`.${randnum}`);
+  gameseq.push(randnum);
+  gameflash(randbtn);
+}
+
+function checkans(idx) {
+  if (userseq[idx] === gameseq[idx]) {
+    if (userseq.length === gameseq.length) {
+      setTimeout(levelup, 800);
     }
+  } else {
+    h2.innerHTML = `Game Over! Your score: <b>${level}</b><br>Click Start to try again.`;
+    
+    document.body.style.background = "#ff4d4d"; // red background
+    setTimeout(() => {
+      document.body.style.background = "linear-gradient(to bottom, #1e1e2f, #2b2b40)";
+    }, 500); // wait before resetting
+    
+    reset();
+  }
 }
 
 
-function btnpress(){
-    console.log(this); //prints total button which we are using here
-    let btn2=this;
-    userflash(btn2);
-
-    let usernum=btn2.getAttribute("id");// id should be same name as its  class here we using id bcz there are more classes for ecah button so we use id of same name given for class so that in array id is stored of same name and of string type and then we can campare them with gameseq array which have classes names  stored and of sring type only..
-    console.log(usernum);//usernum stores id as string
-    userseq.push(usernum);
-    console.log(userseq);
-      //this not works realised checkans();
-    checkans(userseq.length-1);
+function btnpress() {
+  let btn2 = this;
+  userflash(btn2);
+  let usernum = btn2.getAttribute("id");
+  userseq.push(usernum);
+  checkans(userseq.length - 1);
 }
 
+document.querySelectorAll(".btn").forEach(b => b.addEventListener("click", btnpress));
 
-let allbtns=document.querySelectorAll(".btn");
-for(i of allbtns){
-    i.addEventListener("click",btnpress);
+document.querySelector(".reset").addEventListener("click", function () {
+  h2.innerText = "Click Start to begin";
+  reset();
+});
+
+function reset() {
+  gameseq = [];
+  userseq = [];
+  level = 0;
+  started = false;
 }
-    function reset(){
-        gameseq=[];
-        userseq=[];
-        level=0;
-        started=false;
-    }
-
-
-
-
-
-
-
-
-
-
-
